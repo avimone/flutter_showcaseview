@@ -7,12 +7,6 @@ import 'package:showcaseview/showcaseview.dart';
 
 void main() => runApp(const MyApp());
 
-/// Global key for the first showcase widget
-final GlobalKey _firstShowcaseWidget = GlobalKey();
-
-/// Global key for the last showcase widget
-final GlobalKey _lastShowcaseWidget = GlobalKey();
-
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -26,27 +20,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: ShowCaseWidget(
-          hideFloatingActionWidgetForShowcase: [_lastShowcaseWidget],
-          globalFloatingActionWidget: (showcaseContext) => FloatingActionWidget(
-            left: 16,
-            bottom: 16,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                onPressed: ShowCaseWidget.of(showcaseContext).dismiss,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xffEE5366),
-                ),
-                child: const Text(
-                  'Skip',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                  ),
-                ),
-              ),
-            ),
-          ),
           onStart: (index, key) {
             log('onStart: $index, $key');
           },
@@ -64,31 +37,6 @@ class MyApp extends StatelessWidget {
           blurValue: 1,
           autoPlayDelay: const Duration(seconds: 3),
           builder: (context) => const MailPage(),
-          globalTooltipActionConfig: const TooltipActionConfig(
-            position: TooltipActionPosition.inside,
-            alignment: MainAxisAlignment.spaceBetween,
-            actionGap: 20,
-          ),
-          globalTooltipActions: [
-            // Here we don't need previous action for the first showcase widget
-            // so we hide this action for the first showcase widget
-            TooltipActionButton(
-              type: TooltipDefaultActionType.previous,
-              textStyle: const TextStyle(
-                color: Colors.white,
-              ),
-              hideActionWidgetForShowcase: [_firstShowcaseWidget],
-            ),
-            // Here we don't need next action for the last showcase widget so we
-            // hide this action for the last showcase widget
-            TooltipActionButton(
-              type: TooltipDefaultActionType.next,
-              textStyle: const TextStyle(
-                color: Colors.white,
-              ),
-              hideActionWidgetForShowcase: [_lastShowcaseWidget],
-            ),
-          ],
         ),
       ),
     );
@@ -103,9 +51,11 @@ class MailPage extends StatefulWidget {
 }
 
 class _MailPageState extends State<MailPage> {
+  final GlobalKey _one = GlobalKey();
   final GlobalKey _two = GlobalKey();
   final GlobalKey _three = GlobalKey();
   final GlobalKey _four = GlobalKey();
+  final GlobalKey _five = GlobalKey();
   List<Mail> mails = [];
 
   final scrollController = ScrollController();
@@ -115,8 +65,8 @@ class _MailPageState extends State<MailPage> {
     super.initState();
     //Start showcase view after current widget frames are drawn.
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => ShowCaseWidget.of(context).startShowCase(
-          [_firstShowcaseWidget, _two, _three, _four, _lastShowcaseWidget]),
+      (_) => ShowCaseWidget.of(context)
+          .startShowCase([_one, _two, _three, _four, _five]),
     );
     mails = [
       Mail(
@@ -226,26 +176,10 @@ class _MailPageState extends State<MailPage> {
                                 child: Row(
                                   children: <Widget>[
                                     Showcase(
-                                      key: _firstShowcaseWidget,
+                                      key: _one,
                                       description: 'Tap to see menu options',
-                                      onBarrierClick: () {
-                                        debugPrint('Barrier clicked');
-                                        debugPrint(
-                                          'Floating Action widget for first '
-                                          'showcase is now hidden',
-                                        );
-                                        ShowCaseWidget.of(context)
-                                            .hideFloatingActionWidgetForKeys([
-                                          _firstShowcaseWidget,
-                                          _lastShowcaseWidget
-                                        ]);
-                                      },
-                                      tooltipActionConfig:
-                                          const TooltipActionConfig(
-                                        alignment: MainAxisAlignment.end,
-                                        position: TooltipActionPosition.outside,
-                                        gapBetweenContentAndAction: 10,
-                                      ),
+                                      onBarrierClick: () =>
+                                          debugPrint('Barrier clicked'),
                                       child: GestureDetector(
                                         onTap: () =>
                                             debugPrint('menu button clicked'),
@@ -287,51 +221,7 @@ class _MailPageState extends State<MailPage> {
                           "Tap to see profile which contains user's name, profile picture, mobile number and country",
                       tooltipBackgroundColor: Theme.of(context).primaryColor,
                       textColor: Colors.white,
-                      floatingActionWidget: FloatingActionWidget(
-                        left: 16,
-                        bottom: 16,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xffEE5366),
-                            ),
-                            onPressed: ShowCaseWidget.of(context).dismiss,
-                            child: const Text(
-                              'Close Showcase',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
                       targetShapeBorder: const CircleBorder(),
-                      tooltipActionConfig: const TooltipActionConfig(
-                        alignment: MainAxisAlignment.spaceBetween,
-                        gapBetweenContentAndAction: 10,
-                        position: TooltipActionPosition.outside,
-                      ),
-                      tooltipActions: const [
-                        TooltipActionButton(
-                          backgroundColor: Colors.transparent,
-                          type: TooltipDefaultActionType.previous,
-                          padding: EdgeInsets.symmetric(
-                            vertical: 4,
-                          ),
-                          textStyle: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                        TooltipActionButton(
-                          type: TooltipDefaultActionType.next,
-                          backgroundColor: Colors.white,
-                          textStyle: TextStyle(
-                            color: Colors.pinkAccent,
-                          ),
-                        ),
-                      ],
                       child: Container(
                         padding: const EdgeInsets.all(5),
                         width: 45,
@@ -383,38 +273,10 @@ class _MailPageState extends State<MailPage> {
         ),
       ),
       floatingActionButton: Showcase(
-        key: _lastShowcaseWidget,
+        key: _five,
         title: 'Compose Mail',
         description: 'Click here to compose mail',
-        targetBorderRadius: const BorderRadius.all(Radius.circular(16)),
-        showArrow: false,
-        tooltipActions: [
-          TooltipActionButton(
-              type: TooltipDefaultActionType.previous,
-              name: 'Back',
-              onTap: () {
-                // Write your code on button tap
-                ShowCaseWidget.of(context).previous();
-              },
-              backgroundColor: Colors.pink.shade50,
-              textStyle: const TextStyle(
-                color: Colors.pink,
-              )),
-          const TooltipActionButton(
-            type: TooltipDefaultActionType.skip,
-            name: 'Close',
-            textStyle: TextStyle(
-              color: Colors.white,
-            ),
-            tailIcon: ActionButtonIcon(
-              icon: Icon(
-                Icons.close,
-                color: Colors.white,
-                size: 15,
-              ),
-            ),
-          ),
-        ],
+        targetShapeBorder: const CircleBorder(),
         child: FloatingActionButton(
           backgroundColor: Theme.of(context).primaryColor,
           onPressed: () {
@@ -423,13 +285,8 @@ class _MailPageState extends State<MailPage> {
                * currently rendered so the showcased keys are available in the
                * render tree. */
               scrollController.jumpTo(0);
-              ShowCaseWidget.of(context).startShowCase([
-                _firstShowcaseWidget,
-                _two,
-                _three,
-                _four,
-                _lastShowcaseWidget
-              ]);
+              ShowCaseWidget.of(context)
+                  .startShowCase([_one, _two, _three, _four, _five]);
             });
           },
           child: const Icon(
@@ -454,62 +311,27 @@ class _MailPageState extends State<MailPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Showcase(
-          key: key,
-          description: 'Tap to check mail',
-          disposeOnTap: true,
-          onTargetClick: () {
-            Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (_) => const Detail(),
-              ),
-            ).then((_) {
-              setState(() {
-                ShowCaseWidget.of(context)
-                    .startShowCase([_four, _lastShowcaseWidget]);
-              });
-            });
-          },
-          tooltipActionConfig: const TooltipActionConfig(
-            alignment: MainAxisAlignment.spaceBetween,
-            actionGap: 16,
-            position: TooltipActionPosition.outside,
-            gapBetweenContentAndAction: 16,
-          ),
-          tooltipActions: [
-            TooltipActionButton(
-              type: TooltipDefaultActionType.previous,
-              name: 'Back',
-              onTap: () {
-                // Write your code on button tap
-                ShowCaseWidget.of(context).previous();
-              },
-              backgroundColor: Colors.pink.shade50,
-              textStyle: const TextStyle(
-                color: Colors.pink,
-              ),
-            ),
-            const TooltipActionButton(
-              type: TooltipDefaultActionType.skip,
-              name: 'Close',
-              textStyle: TextStyle(
-                color: Colors.white,
-              ),
-              tailIcon: ActionButtonIcon(
-                icon: Icon(
-                  Icons.close,
-                  color: Colors.white,
-                  size: 15,
+            key: key,
+            description: 'Tap to check mail',
+            tooltipPosition: TooltipPosition.top,
+            disposeOnTap: true,
+            onTargetClick: () {
+              Navigator.push<void>(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (_) => const Detail(),
                 ),
-              ),
-            ),
-          ],
-          child: MailTile(
-            mail: mail,
-            showCaseKey: _four,
-            showCaseDetail: showCaseDetail,
-          ),
-        ),
+              ).then((_) {
+                setState(() {
+                  ShowCaseWidget.of(context).startShowCase([_four, _five]);
+                });
+              });
+            },
+            child: MailTile(
+              mail: mail,
+              showCaseKey: _four,
+              showCaseDetail: showCaseDetail,
+            )),
       ),
     );
   }
@@ -589,70 +411,40 @@ class MailTile extends StatelessWidget {
                   Showcase.withWidget(
                     key: showCaseKey!,
                     height: 50,
-                    width: 150,
-                    tooltipActionConfig: const TooltipActionConfig(
-                      alignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      actionGap: 16,
-                    ),
-                    tooltipActions: const [
-                      TooltipActionButton(
-                        type: TooltipDefaultActionType.previous,
-                        name: 'Back',
-                        textStyle: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      TooltipActionButton(
-                        type: TooltipDefaultActionType.skip,
-                        name: 'Close',
-                        textStyle: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+                    width: 140,
                     targetShapeBorder: const CircleBorder(),
                     targetBorderRadius: const BorderRadius.all(
                       Radius.circular(150),
                     ),
-                    container: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                      ),
-                      width: 150,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            width: 45,
-                            height: 45,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Color(0xffFCD8DC),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'S',
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
+                    container: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          width: 45,
+                          height: 45,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xffFCD8DC),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'S',
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text(
-                            "Your sender's profile",
-                          )
-                        ],
-                      ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text(
+                          "Your sender's profile ",
+                          style: TextStyle(color: Colors.white),
+                        )
+                      ],
                     ),
                     child: const SAvatarExampleChild(),
                   )

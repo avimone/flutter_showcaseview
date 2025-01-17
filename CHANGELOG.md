@@ -1,18 +1,3 @@
-## [4.0.0]
-- [BREAKING] Fixed [#457](https://github.com/SimformSolutionsPvtLtd/flutter_showcaseview/issues/457) - titleAlignment property does not work
-- Feature [#466](https://github.com/SimformSolutionsPvtLtd/flutter_showcaseview/pull/466) - Added Action widget for tooltip
-- Feature [#475](https://github.com/SimformSolutionsPvtLtd/flutter_showcaseview/issues/475) - Add
-  feasibility to change margin of tooltip with `toolTipMargin`.
-- Feature [#478](https://github.com/SimformSolutionsPvtLtd/flutter_showcaseview/issues/478) - Added
-  feasibility to change auto scroll widget alignment `scrollAlignment`.
-- Feature [#386](https://github.com/SimformSolutionsPvtLtd/flutter_showcaseview/pull/386) - Added `enableAutoScroll` to `showcase`.
-- Fixed [#489](https://github.com/SimformSolutionsPvtLtd/flutter_showcaseview/pull/489) - Fixed
-  mounter issue inside the `_scrollIntoView` function
-- Feature [#395](https://github.com/SimformSolutionsPvtLtd/flutter_showcaseview/issues/395) - Added `globalFloatingActionWidget` and `hideFloatingActionWidgetForShowcase` for global
-  static fixed widget
-- Fixed [#486](https://github.com/SimformSolutionsPvtLtd/flutter_showcaseview/pull/486) - Improved AnchoredOverlayKey key initialization
-- Fixed [#464](https://github.com/SimformSolutionsPvtLtd/flutter_showcaseview/issues/464) - StateError Bad state: RenderBox was not laid out: RenderTransform
-
 ## [3.0.0]
 - [BREAKING] Fixed [#434](https://github.com/SimformSolutionsPvtLtd/flutter_showcaseview/issues/434) removed deprecated text style after Flutter 3.22 follow [migration guide](https://docs.flutter.dev/release/breaking-changes/3-19-deprecations#texttheme)
 - Updated minimum support to dart sdk 2.18.0
